@@ -30,8 +30,14 @@ df.drop(features_to_remove, axis=1, inplace=True, errors='ignore')
 # Fill missing values
 df.fillna(0, inplace=True)
 
+correlation_matrix = df.corr()
+high_correlation_features = correlation_matrix.index[abs(correlation_matrix['stars']) > 0.1].tolist()  # Adjust the threshold as needed
+
+# Remove 'stars' from the list of features
+high_correlation_features.remove('stars')
+
 # Define features (X) and target (y)
-X = df[['average_review_sentiment', 'average_review_length', 'average_review_age']]
+X = df[high_correlation_features]
 y = df['stars']
 
 # Split data into training and testing sets
@@ -65,7 +71,7 @@ plt.grid(True)
 plt.show()
 
 # Test a single data point
-single_data_point = X_test.iloc[[50]]  # Select the first data point in the test set
+single_data_point = X_test.iloc[[0]]  # Select the first data point in the test set
 true_value = y_test.iloc[0]  # Get the true value of the first data point in the test set
 
 # Make a prediction for the single data point
